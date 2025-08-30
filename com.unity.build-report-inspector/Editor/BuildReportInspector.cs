@@ -43,22 +43,16 @@ namespace Unity.BuildReportInspector
         [MenuItem("Window/Open Last Build Report")]
         public static void OpenLastBuild()
         {
-            if (!Directory.Exists(k_BuildReportDir))
-                Directory.CreateDirectory(k_BuildReportDir);
-
-            var date = File.GetLastWriteTime(k_LastBuildReportFileName);
-            var name = "Build_" + date.ToString("yyyy-dd-MMM-HH-mm-ss") + ".buildreport";
-
-            var destination = k_BuildReportDir + "/" + name;
-            if (!File.Exists(destination))
-            {
-                var tempPath = k_BuildReportDir + "/LastBuild.buildreport";
-                File.Copy(k_LastBuildReportFileName, tempPath, true);
-                AssetDatabase.ImportAsset(tempPath);
-                AssetDatabase.RenameAsset(tempPath, name);
-            }
-
-            Selection.objects = new Object[] { AssetDatabase.LoadAssetAtPath<BuildReport>(destination) };
+            // XXX: Copying build report will crash the Unity Editor (2022.3.60f1)
+            // #3  0x0000010569bd54 in scripting_method_invoke(ScriptingMethodPtr, ScriptingObjectPtr, ScriptingArguments&, ScriptingExceptionPtr*, bool)
+            // #4  0x0000010567658c in ScriptingInvocation::Invoke(ScriptingExceptionPtr*, bool)
+            // #5  0x0000010699f298 in AssetModificationCallbacks::FileModeChanged(core::hash_set<UnityGUID, core::hash<UnityGUID>, std::__1::equal_to<UnityGUID>> const&, FileMode)
+            // #6  0x00000106985fbc in AssetDatabase::ReSerializeAssetsWithoutImportIfNeeded(core::hash_set<UnityGUID, core::hash<UnityGUID>, std::__1::equal_to<UnityGUID>> const&)
+            // #7  0x00000106a5f780 in RefreshInternalV2(AssetDatabase::UpdateAssetOptions, ScanFilter const&, InternalRefreshFlagsV2)
+            // #8  0x00000106a3d17c in StopAssetImportingV2Internal(AssetDatabase::UpdateAssetOptions, InternalRefreshFlagsV2, ScanFilter const*, char const*)
+            // #9  0x00000106a3f170 in RefreshV2(AssetDatabase::UpdateAssetOptions)
+            // #10 0x000001069b23b0 in AssetDatabase::Refresh(AssetDatabase::UpdateAssetOptions)
+            Selection.activeObject = BuildReport.GetLatestReport();
         }
 
         #region Helpers
