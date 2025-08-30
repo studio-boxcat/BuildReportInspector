@@ -44,7 +44,7 @@ namespace Unity.BuildReportInspector.Mobile.ZipUtility
             {
                 m_ZipStream.Seek(-offset, SeekOrigin.End);
                 var sizeBytes = new byte[4];
-                m_ZipStream.Read(sizeBytes, 0, 4);
+                _ = m_ZipStream.Read(sizeBytes, 0, 4);
                 if (!sizeBytes.SequenceEqual(marker))
                     continue;
                 m_ZipStream.Seek(-4, SeekOrigin.Current);
@@ -68,7 +68,7 @@ namespace Unity.BuildReportInspector.Mobile.ZipUtility
         {
             m_ZipStream.Seek(position, SeekOrigin.Begin);
             var resultBytes = new byte[length];
-            m_ZipStream.Read(resultBytes, 0, length);
+            _ = m_ZipStream.Read(resultBytes, 0, length);
             return resultBytes;
         }
 
